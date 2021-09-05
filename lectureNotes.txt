@@ -70,7 +70,7 @@ SQL syntaksia. siten on myös helppo vaihtaa SQLitestä toisiin SQL tietokantoih
 Entity frameform database context tehdään Persistence-kansioon:
 asennetaan nuget package Microsoft.entityFrameworkCore.SQLite.
 siten luodaan c# luokka DataContext joka inheritoi DbContext, joka taas tulee tuosta entity paketista.
-Sitten API-kansion startup-luokassa lisätään datacontext sserviceihin, jotta sitä voi käyttää kaikkialla.
+Sitten API-kansion startup-luokassa lisätään datacontext serviceihin, jotta sitä voi käyttää kaikkialla.
 Lisäksi API-kansiossa olevaan appsettings.development.json määritellään 
 sql tietokannan connectionstring, joka taas siellä startup luokassa luetaan.
 
