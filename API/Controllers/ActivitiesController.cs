@@ -21,8 +21,15 @@ namespace API.Controllers
         {
             //Use object initialiser syntax in Query to define the Id-property of the Query.
             //Because Id is not a input argument of Query
-            return await Mediator.Send(new Details.Query{Id = id});
+            return await Mediator.Send(new Details.Query { Id = id });
             //return await _context.Activities.FindAsync(id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateActivity(Activity activity)
+        {
+            //use object initiliazer syntaxt to pass the activity into the command
+            return Ok(await Mediator.Send(new Create.Command { Activity = activity }));
         }
     }
 }
