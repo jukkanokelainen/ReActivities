@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
 
 namespace API
 {
@@ -47,6 +48,9 @@ namespace API
                     policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
                 });
             });
+            //Add the Mediator to services
+            //tell mediator where to find handlers
+            services.AddMediatR(typeof(Application.Activities.List.Handler).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
