@@ -19,7 +19,9 @@ namespace API.Controllers
         [HttpGet("{id}")] //activities/id
         public async Task<ActionResult<Activity>> GetActivity(Guid id)
         {
-            return Ok();
+            //Use object initialiser syntax in Query to define the Id-property of the Query.
+            //Because Id is not a input argument of Query
+            return await Mediator.Send(new Details.Query{Id = id});
             //return await _context.Activities.FindAsync(id);
         }
     }
