@@ -1,4 +1,6 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 //BaseApiController is the base that all other controllers are derived from
 //all have same ApiController-attribute and Route that have "controller" as placeholder
@@ -10,6 +12,11 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class BaseApiController : ControllerBase
     {
+        private IMediator _mediator;
+
+        //If _mediator is null get it from services
+        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices
+        .GetService<IMediator>();
 
     }
 }
