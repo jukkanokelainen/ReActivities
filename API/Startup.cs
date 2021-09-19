@@ -51,6 +51,10 @@ namespace API
             //Add the Mediator to services
             //tell mediator where to find handlers
             services.AddMediatR(typeof(Application.Activities.List.Handler).Assembly);
+            //Add automapper to services
+            services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

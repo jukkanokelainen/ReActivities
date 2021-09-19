@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Persistence;
@@ -18,10 +19,12 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IMapper mapper)
             {
                 this._context = context;
+                this._mapper = mapper;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -29,7 +32,11 @@ namespace Application.Activities
                 var activity = await _context.Activities.FindAsync(request.Activity.Id);
 
                 //We could update each property one by on one.
-                activity.Title = request.Activity.Title ?? activity.Title;
+                //activity.Title = request.Activity.Title ?? activity.Title;
+                //instead we use handler
+
+                _mapper.Map(request.Activity, activity);
+
                 await _context.SaveChangesAsync();
                 //This is where the data is actually stored indatabase.
                 //await _context.SaveChangesAsync();
