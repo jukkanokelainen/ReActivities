@@ -31,5 +31,12 @@ namespace API.Controllers
             //use object initiliazer syntaxt to pass the activity into the command
             return Ok(await Mediator.Send(new Create.Command { Activity = activity }));
         }
+
+        [HttpPut("{id}")] //activities/id
+        public async Task<IActionResult> EditActivity(Guid id, Activity activity)
+        {
+            activity.Id = id;
+            return Ok(await Mediator.Send(new Edit.Command { Activity = activity }));
+        }
     }
 }
