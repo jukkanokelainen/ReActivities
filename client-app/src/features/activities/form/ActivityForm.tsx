@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import { Button, Form, FormInput, Segment } from 'semantic-ui-react'
+import { Button, Form, Segment } from 'semantic-ui-react'
 import { Activity } from '../../../app/models/activity'
 
 interface Props {
@@ -30,10 +30,10 @@ function ActivityForm({activity : selectedActivity, closeForm, addOrEditActivity
     const handleSubmit = () => {
         addOrEditActivity(activity);
     }
-    
+
     return (
         <Segment clearing>
-            <Form onSubmit={() => handleSubmit()}>
+            <Form onSubmit={() => handleSubmit()} autoComplete='off' >
                 <Form.Input placeholder='Title' value={activity?.title} name='title' onChange={handleChange}/>
                 <Form.TextArea placeholder='Description' value={activity?.description} name='description' onChange={handleChange}/>
                 <Form.Input placeholder='Category' value={activity?.category} name='category' onChange={handleChange}/>
