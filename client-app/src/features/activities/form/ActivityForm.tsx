@@ -5,9 +5,10 @@ import { Activity } from '../../../app/models/activity'
 interface Props {
     activity: Activity | undefined;
     closeForm: () => void;
+    addOrEditActivity: (activity: Activity) => void;
 }
 
-function ActivityForm({activity : selectedActivity, closeForm} : Props) {
+function ActivityForm({activity : selectedActivity, closeForm, addOrEditActivity} : Props) {
 
     const initialState = selectedActivity ?? {
         id: '',
@@ -24,11 +25,15 @@ function ActivityForm({activity : selectedActivity, closeForm} : Props) {
         const {name, value} = event.target;
 
         setActivity({...activity, [name]:value});
-
     }
+
+    const handleSubmit = () => {
+        addOrEditActivity(activity);
+    }
+    
     return (
         <Segment clearing>
-            <Form>
+            <Form onSubmit={() => handleSubmit()}>
                 <Form.Input placeholder='Title' value={activity?.title} name='title' onChange={handleChange}/>
                 <Form.TextArea placeholder='Description' value={activity?.description} name='description' onChange={handleChange}/>
                 <Form.Input placeholder='Category' value={activity?.category} name='category' onChange={handleChange}/>
