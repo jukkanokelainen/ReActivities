@@ -5,9 +5,10 @@ import ActivityItem from './ActivityItem'
 interface Props {
     activities: Activity[];
     selectActivity: (id: string) => void;
+    deleteActivity: (id: string) => void;
 }
 
-function ActivityList({activities, selectActivity} : Props) {
+function ActivityList({activities, selectActivity, deleteActivity} : Props) {
     return (
         <Segment>
             <Item.Group divided>
@@ -15,7 +16,8 @@ function ActivityList({activities, selectActivity} : Props) {
                     <ActivityItem 
                     key={activity.id} 
                     activity={activity} 
-                    selectActivity={selectActivity}/>
+                    selectActivity={selectActivity}
+                    deleteActivity={deleteActivity}/>
                 ))}
             </Item.Group>
         </Segment>
