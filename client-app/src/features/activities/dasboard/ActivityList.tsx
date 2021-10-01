@@ -4,14 +4,18 @@ import ActivityItem from './ActivityItem'
 
 interface Props {
     activities: Activity[];
+    selectActivity: (id: string) => void;
 }
 
-function ActivityList({activities} : Props) {
+function ActivityList({activities, selectActivity} : Props) {
     return (
         <Segment>
             <Item.Group divided>
                 {activities.map(activity => (
-                    <ActivityItem key={activity.id} activity={activity} />
+                    <ActivityItem 
+                    key={activity.id} 
+                    activity={activity} 
+                    selectActivity={selectActivity}/>
                 ))}
             </Item.Group>
         </Segment>

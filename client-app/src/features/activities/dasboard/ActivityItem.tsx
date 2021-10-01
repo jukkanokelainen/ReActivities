@@ -3,8 +3,9 @@ import { Activity } from '../../../app/models/activity'
 
 interface Props {
     activity: Activity;
+    selectActivity: (id: string) => void;
 }
-function ActivityItem({activity} : Props) {
+function ActivityItem({activity, selectActivity} : Props) {
     return (
         <Item>
             <Item.Content>
@@ -15,7 +16,8 @@ function ActivityItem({activity} : Props) {
                     <div>{activity.city}, {activity.venue}</div>
                 </Item.Description>
                 <Item.Extra>
-                    <Button floated='right' content='View' color='blue' />
+                    <Button floated='right' content='View' color='blue' 
+                    onClick={()=>selectActivity(activity.id)}/>
                     <Label basic content={activity.category} />
                 </Item.Extra>
             </Item.Content>
