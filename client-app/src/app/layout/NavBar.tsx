@@ -11,7 +11,7 @@ export default function NavBar() {
                 </Menu.Item>
                 <Menu.Item name='Activities' />
                 <Menu.Item>
-                    <Button positive content='Create Activity' />
+                    <Button positive content='Create Activity!' />
                 </Menu.Item>
             </Container>
 
