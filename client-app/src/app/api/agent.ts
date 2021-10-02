@@ -3,7 +3,23 @@ import axios, { AxiosResponse } from 'axios';
 import ActivityDashboard from '../../features/activities/dasboard/ActivityDashboard';
 import { Activity } from '../models/activity';
 
+const sleep = (delay: number) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, delay)
+    })
+}
+
 axios.defaults.baseURL = 'http://localhost:5000/api';
+
+axios.interceptors.response.use(async response => {
+    try {
+        await sleep(1000);
+        return response;
+    } catch (error) {
+        console.log(error);
+        return await Promise.reject(error);
+    }
+})
 
 //koska data luetaan aina response.data:sta niin tämä vähentää kirjoitusta
 //<T> on generic type. oikea tyyppi kerrotaan sitten esim
