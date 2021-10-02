@@ -12,6 +12,7 @@ function App() {
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);//<-- | voi olla activity tai undefined-tyyppiä
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     agent.Activities.list().then(response => {
@@ -45,16 +46,32 @@ function App() {
   }
 
   function handleAddOrEditActivity(activity : Activity) {
-    activity.id === ''
-    ? setActivities([...activities, {...activity, id: uuid()}]) 
-    : setActivities([...activities.filter(x => x.id !== activity.id), activity])
-
-    setEditMode(false);
-    setSelectedActivity(activity);
+    setSubmitting(true)
+    if(activity.id) {
+      agent.Activities.update(activity).then(() => {
+        setActivities([...activities.filter(x => x.id !== activity.id), activity])
+        setEditMode(false);
+        setSelectedActivity(activity);
+        setSubmitting(false);
+      });
+    }
+    else {
+      activity.id = uuid()
+      agent.Activities.create(activity).then( () => {
+        setActivities([...activities, activity]);
+        setEditMode(false);
+        setSelectedActivity(activity);
+        setSubmitting(false);
+      });
+    }
   }
 
   function handleDeleteActivity (id : string) {
-    setActivities([...activities.filter(x => x.id !== id)]);
+    setSubmitting(true)
+    agent.Activities.delete(id).then(() => {
+      setActivities([...activities.filter(x => x.id !== id)]);
+      setSubmitting(false);
+    })
   }
 
   if (loading) return <LoadingComponent content={'Loading app'} />;
@@ -72,6 +89,7 @@ function App() {
         editMode={editMode}
         addOrEditActivity={handleAddOrEditActivity}
         deleteActivity={handleDeleteActivity}
+        submitting={submitting}
         />
       </Container>   
     </Fragment>

@@ -1,6 +1,4 @@
-import React from 'react';
 import axios, { AxiosResponse } from 'axios';
-import ActivityDashboard from '../../features/activities/dasboard/ActivityDashboard';
 import { Activity } from '../models/activity';
 
 const sleep = (delay: number) => {
@@ -41,7 +39,11 @@ const requests = {
 
 //objekti, jossa activityihin liittyvät kyselyt
 const Activities = {
-    list: () => requests.get<Activity[]>('/activities')
+    list: () => requests.get<Activity[]>('/activities'),
+    details: (id: string) => requests.get<Activity>(`/activities/${id}`),
+    create: (activity: Activity) => requests.post('/activities', activity),
+    update: (activity: Activity) => requests.put(`/activities/${activity.id}`, activity),
+    delete: (id: string) => requests.del(`/activities/${id}`),
 }
 
 const agent = {
