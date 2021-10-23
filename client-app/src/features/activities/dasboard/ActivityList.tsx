@@ -1,33 +1,24 @@
+import { observer } from 'mobx-react-lite'
 import {Item, Segment } from 'semantic-ui-react'
-import { Activity } from '../../../app/models/activity'
+import { useStore } from '../../../app/stores/Store'
 import ActivityItem from './ActivityItem'
 
-interface Props {
-    activities: Activity[];
-    selectActivity: (id: string) => void;
-    deleteActivity: (id: string) => void;
-    submitting: boolean;
-}
 
-function ActivityList({
-    activities, 
-    selectActivity, 
-    deleteActivity,
-    submitting} : Props) {
+function ActivityList() {
+
+        const {activityStore} = useStore();
+
     return (
         <Segment>
             <Item.Group divided>
-                {activities.map(activity => (
+                {activityStore.activities.map(activity => (
                     <ActivityItem 
-                    key={activity.id} 
-                    activity={activity} 
-                    selectActivity={selectActivity}
-                    deleteActivity={deleteActivity}
-                    submitting/>
+                    key={activity.id}
+                    activity={activity}/>
                 ))}
             </Item.Group>
         </Segment>
     )
 }
 
-export default ActivityList
+export default observer(ActivityList)
