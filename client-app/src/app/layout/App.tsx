@@ -6,8 +6,11 @@ import ActivityDashboard from '../../features/activities/dasboard/ActivityDashbo
 import {v4 as uuid} from 'uuid';
 import agent from '../api/agent';
 import LoadingComponent from './LoadingComponent';
+import { useStore } from '../stores/Store';
 
 function App() {
+  const {activityStore} = useStore();
+
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);//<-- | voi olla activity tai undefined-tyyppiä
   const [editMode, setEditMode] = useState(false);
@@ -79,6 +82,7 @@ function App() {
     <Fragment>
       <NavBar openForm={openForm}/>
       <Container style={{marginTop: '7em'}}>
+        <h2>{activityStore.title}</h2>
         <ActivityDashboard 
         activities={activities} 
         selectedActivity={selectedActivity}
