@@ -19,7 +19,7 @@ function App() {
 
   useEffect(() => {
     activityStore.loadActivities();
-  }, []);
+  }, [activityStore]);
 
   function handleSelectedActivity(id : string) {
     setSelectedActivity(activities.find(x => x.id === id));

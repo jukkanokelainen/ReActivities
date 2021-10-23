@@ -14,7 +14,7 @@ export default class ActivityStore{
     }
 
     loadActivities = async () => {
-        this.loadingInitial = true;
+        this.setLoadingInitial(true);
         
         try {
             const activities = await agent.Activities.list();
@@ -24,13 +24,17 @@ export default class ActivityStore{
                 //In mobex we can mutate the state directly
                 this.activities.push(activity);
             })
-            this.loadingInitial = false;
+            //need to use action because using async method here
+            this.setLoadingInitial(false);
         }
         catch (error)
         {
-            this.loadingInitial = false;
+            this.setLoadingInitial(false);
         }
-        
+    }
+
+    setLoadingInitial = (state: boolean) => {
+        this.loadingInitial = state;
     }
 
 }
