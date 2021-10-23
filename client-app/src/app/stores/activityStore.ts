@@ -1,30 +1,34 @@
-import {  makeAutoObservable} from "mobx";
+import {  makeAutoObservable, runInAction} from "mobx";
 import agent from "../api/agent";
 import { Activity } from "../models/activity";
 import {v4 as uuid} from 'uuid';
 
 export default class ActivityStore{
-    activities: Activity[] = [];
+    //activities: Activity[] = [];
+    activityregistry: Map<string, Activity> = new Map<string, Activity>();
     selectedActivity: Activity | undefined = undefined;
     editMode = false;
     loading = false;
-    loadingInitial = false;
+    loadingInitial = true;
     submitting = false;
     
     constructor() {
         makeAutoObservable(this);
     }
 
+    get activitiesByDate() {
+        return Array.from(this.activityregistry.values()).sort((a, b) =>
+        Date.parse(a.date) - Date.parse(b.date));
+    }
+    
     loadActivities = async () => {
-        this.setLoadingInitial(true);
-        
         try {
             const activities = await agent.Activities.list();
             //handle datetime
             activities.forEach(activity => {
                 activity.date = activity.date.split('T')[0];
                 //In mobex we can mutate the state directly
-                this.activities.push(activity);
+                this.activityregistry.set(activity.id, activity);
             })
             //need to use action because using async method here
             this.setLoadingInitial(false);
@@ -40,7 +44,7 @@ export default class ActivityStore{
     }
 
     selectActivity = (id : string) => {
-        let res = this.activities.find(x => x.id === id);
+        let res = this.activityregistry.get(id);
         this.selectedActivity = res;   
       }
 
@@ -49,11 +53,12 @@ export default class ActivityStore{
         if(activity.id) {
             try {
                 await agent.Activities.update(activity);
-
-                this.setActivities([...this.activities.filter(x => x.id !== activity.id), activity]);
-                this.setEditMode(false);
-                this.setSelectedActivity(activity);
-                this.setSubmitting(false);
+                runInAction(() => {
+                    this.activityregistry.set(activity.id, activity);
+                    this.editMode=false;
+                    this.selectedActivity=activity;  
+                    this.submitting=false;
+                })
             }
             catch (error) {
                 this.submitting = false;
@@ -62,16 +67,16 @@ export default class ActivityStore{
         else {
             activity.id = uuid();
             await agent.Activities.create(activity);
-            this.setActivities([...this.activities, activity]);
-            this.setEditMode(false);
-            this.setSelectedActivity(activity);  
-            this.setSubmitting(false);
+            runInAction(() => {
+                this.activityregistry.set(activity.id, activity);
+                this.editMode=false;
+                this.selectedActivity=activity;  
+                this.submitting=false;
+            })
+            
         }
       }
       
-    setActivities = (Activities: Activity[]) => {
-        this.activities = Activities;
-    }
     setEditMode = (state: boolean) => {
         this.editMode = state;
     }
@@ -100,11 +105,15 @@ export default class ActivityStore{
         this.setSubmitting(true);
         try {
             await agent.Activities.delete(id);
-            this.setActivities([...this.activities.filter(x => x.id !== id)]);
-            this.setSubmitting(false);
+            runInAction(() => {
+                this.activityregistry.delete(id);
+                this.submitting=false;
+            })
         }
         catch (error){
-            this.setSubmitting(false);
+            runInAction(() => {
+                this.submitting = false;
+            })
         }
       }
 }

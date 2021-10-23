@@ -11,7 +11,7 @@ function ActivityList() {
     return (
         <Segment>
             <Item.Group divided>
-                {activityStore.activities.map(activity => (
+                {activityStore.activitiesByDate.map(activity => (
                     <ActivityItem 
                     key={activity.id}
                     activity={activity}/>
