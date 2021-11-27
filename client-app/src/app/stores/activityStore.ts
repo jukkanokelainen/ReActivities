@@ -22,13 +22,12 @@ export default class ActivityStore{
     }
     
     loadActivities = async () => {
+        this.loadingInitial = true;
         try {
             const activities = await agent.Activities.list();
             //handle datetime
             activities.forEach(activity => {
-                activity.date = activity.date.split('T')[0];
-                //In mobex we can mutate the state directly
-                this.activityregistry.set(activity.id, activity);
+                this.setActivity(activity);
             })
             //need to use action because using async method here
             this.setLoadingInitial(false);
@@ -37,6 +36,34 @@ export default class ActivityStore{
         {
             this.setLoadingInitial(false);
         }
+    }
+
+    loadActivity = async (id: string) => {
+        let activity = this.getActivity(id);
+        if (activity){
+            this.selectedActivity = activity;
+        } else {
+            this.loadingInitial = true;
+            try {
+                activity = await agent.Activities.details(id);
+                this.setActivity(activity);
+                this.selectedActivity = activity;
+                this.setLoadingInitial(false);
+            } catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
+        }
+    }
+        
+    private setActivity = (activity: Activity) => {
+        activity.date = activity.date.split('T')[0];
+        //In mobex we can mutate the state directly
+        this.activityregistry.set(activity.id, activity);
+    }
+
+    private  getActivity = (id: string) => {
+        return this.activityregistry.get(id); 
     }
 
     setLoadingInitial = (state: boolean) => {
@@ -80,41 +107,25 @@ export default class ActivityStore{
     setEditMode = (state: boolean) => {
         this.editMode = state;
     }
-    setSelectedActivity = (Activity: Activity | undefined) => {
-        this.selectedActivity = Activity;
-    }
+  
     setSubmitting = (state: boolean) => {
         this.submitting = state;
     }
 
-    cancelSelectedActivity= () => {
-        this.selectedActivity=undefined;
-      }
-    
-      openForm = (id? : string) => {
-        id !== undefined ? this.selectActivity(id) : this.cancelSelectedActivity();
-        this.editMode=true;
-      }
-    
-      closeForm = () => {
-        this.editMode = false;
-      }
-    
-    
-      deleteActivity = async (id : string) => {
-        this.setSubmitting(true);
-        try {
-            await agent.Activities.delete(id);
-            runInAction(() => {
-                this.activityregistry.delete(id);
-                this.submitting=false;
-            })
-        }
-        catch (error){
-            runInAction(() => {
-                this.submitting = false;
-            })
-        }
-      }
+    deleteActivity = async (id : string) => {
+    this.setSubmitting(true);
+    try {
+        await agent.Activities.delete(id);
+        runInAction(() => {
+            this.activityregistry.delete(id);
+            this.submitting=false;
+        })
+    }
+    catch (error){
+        runInAction(() => {
+            this.submitting = false;
+        })
+    }
+    }
 }
 

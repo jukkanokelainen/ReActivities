@@ -38,7 +38,7 @@ function ActivityForm() {
                 <Form.Input placeholder='City' value={activity?.city} name='city' onChange={handleChange}/>
                 <Form.Input placeholder='Venue' value={activity?.venue} name='venue' onChange={handleChange}/>
                 <Button loading={activityStore.submitting} floated='right' positive type='submit' content='Submit' />
-                <Button floated='right' type='button' content='Cancel' onClick={() => activityStore.closeForm()} />
+                <Button floated='right' type='button' content='Cancel'/>
             </Form>
         </Segment>
     )
