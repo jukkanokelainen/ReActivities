@@ -4,12 +4,13 @@ import NavBar from './NavBar';
 import ActivityDashboard from '../../features/activities/dasboard/ActivityDashboard';
 import { observer } from 'mobx-react-lite';
 import HomePage from '../../features/home/HomePage';
-import { Route } from 'react-router-dom';
+import { Route, useLocation } from 'react-router-dom';
 import ActivityForm from '../../features/activities/form/ActivityForm';
 import ActivityDetails from '../../features/activities/details/ActivityDetails';
 
 function App() {
-
+  const location = useLocation();
+  
   return (
     <Fragment>
       <NavBar/>
@@ -17,7 +18,7 @@ function App() {
         <Route exact path='/' component={HomePage} />
         <Route exact path='/Activities' component={ActivityDashboard} />
         <Route path='/Activities/:id' component={ActivityDetails} />
-        <Route path='/CreateActivity' component={ActivityForm} />
+        <Route key={location.key} path={['/CreateActivity', '/manage/:id']} component={ActivityForm} />
       </Container>   
     </Fragment>
   );
