@@ -10,16 +10,22 @@ import ActivityDetails from '../../features/activities/details/ActivityDetails';
 
 function App() {
   const location = useLocation();
-  
+
   return (
     <Fragment>
-      <NavBar/>
-      <Container style={{marginTop: '7em'}}>
-        <Route exact path='/' component={HomePage} />
-        <Route exact path='/Activities' component={ActivityDashboard} />
-        <Route path='/Activities/:id' component={ActivityDetails} />
-        <Route key={location.key} path={['/CreateActivity', '/manage/:id']} component={ActivityForm} />
-      </Container>   
+      <Route exact path='/' component={HomePage} />
+      <Route 
+       path={'/(.+)'} //This path is rendered if there is anything else than "/"
+       render={() => ( //instead of rendering component, render everything inside:
+         <Fragment>
+          <NavBar/>
+          <Container style={{marginTop: '7em'}}>
+            <Route exact path='/Activities' component={ActivityDashboard} />
+            <Route path='/Activities/:id' component={ActivityDetails} />
+            <Route key={location.key} path={['/CreateActivity', '/manage/:id']} component={ActivityForm} />
+          </Container> 
+        </Fragment>)
+        } />
     </Fragment>
   );
 }
