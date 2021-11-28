@@ -1,7 +1,6 @@
 import {  makeAutoObservable, runInAction} from "mobx";
 import agent from "../api/agent";
 import { Activity } from "../models/activity";
-import {v4 as uuid} from 'uuid';
 
 export default class ActivityStore{
     //activities: Activity[] = [];
@@ -48,7 +47,9 @@ export default class ActivityStore{
             try {
                 activity = await agent.Activities.details(id);
                 this.setActivity(activity);
-                this.selectedActivity = activity;
+                runInAction(() => {
+                    this.selectedActivity = activity;
+                })
                 this.setLoadingInitial(false);
                 return activity;
             } catch (error) {
@@ -77,34 +78,32 @@ export default class ActivityStore{
         this.selectedActivity = res;   
       }
 
-    handleAddOrEditActivity = async (activity : Activity) => {
+    editActivity = async (activity : Activity) => {
         this.submitting = true;
-        if(activity.id) {
-            try {
-                await agent.Activities.update(activity);
-                runInAction(() => {
-                    this.activityregistry.set(activity.id, activity);
-                    this.editMode=false;
-                    this.selectedActivity=activity;  
-                    this.submitting=false;
-                })
-            }
-            catch (error) {
-                this.submitting = false;
-            }
-        }
-        else {
-            activity.id = uuid();
-            await agent.Activities.create(activity);
+        try {
+            await agent.Activities.update(activity);
             runInAction(() => {
                 this.activityregistry.set(activity.id, activity);
                 this.editMode=false;
                 this.selectedActivity=activity;  
                 this.submitting=false;
             })
-            
         }
-      }
+        catch (error) {
+            this.submitting = false;
+        }
+    }
+
+    createActivity = async (activity : Activity) => {
+        this.setSubmitting(true);
+        await agent.Activities.create(activity);
+        runInAction(() => {
+            this.activityregistry.set(activity.id, activity);
+            this.editMode=false;
+            this.selectedActivity=activity;  
+            this.setSubmitting(false);
+        })
+    }
       
     setEditMode = (state: boolean) => {
         this.editMode = state;

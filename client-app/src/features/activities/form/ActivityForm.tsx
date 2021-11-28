@@ -1,16 +1,18 @@
 import { observer } from 'mobx-react-lite';
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import {  useParams } from 'react-router';
+import {  useParams, useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Button, Form, Segment } from 'semantic-ui-react'
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/Store'
+import {v4 as uuid} from 'uuid';
 
 function ActivityForm() {
 
     const {activityStore} = useStore();
-    const {loadActivity, handleAddOrEditActivity, loadingInitial} = activityStore;
+    const {loadActivity, editActivity, createActivity, loadingInitial} = activityStore;
     const {id} = useParams<{id: string}>();
+    const history = useHistory();
 
     const [activity, setActivity] = useState({
         id: '',
@@ -23,10 +25,11 @@ function ActivityForm() {
     })
 
     useEffect(() => {
-        loadActivity(id).then(
-            (returnedActivity) => setActivity(returnedActivity!));
-            // {/*esclamateion mark to show it is not undefined*/}
- 
+        if (id) {
+            loadActivity(id).then(
+                (returnedActivity) => setActivity(returnedActivity!));
+                // {/*esclamateion mark to show it is not undefined*/}
+        }
     }, [loadActivity, id])
     
     
@@ -38,10 +41,21 @@ function ActivityForm() {
     }
 
     const handleSubmit = () => {
-        handleAddOrEditActivity(activity);
+        if(activity.id.length === 0){
+            activity.id = uuid();
+            createActivity(activity).then(() => {
+                history.push(`/Activities/${activity.id}`);
+            }); 
+        } else {
+            //history push inside then to make sure the redirect is done only after the 
+            //edit is finnished (changes are directly shown in UI.)
+            editActivity(activity).then(() => {
+                history.push(`/Activities/${activity.id}`);
+            });
+        }
     }
 
-    if(loadingInitial) return <LoadingComponent content='Loading activity' />
+    if(loadingInitial && id) return <LoadingComponent content='Loading activity' />
     return (
         <Segment clearing>
             <Form onSubmit={() => handleSubmit()} autoComplete='off' >
