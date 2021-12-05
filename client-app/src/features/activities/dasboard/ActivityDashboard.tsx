@@ -14,7 +14,7 @@ function ActivityDashboard() {
         if (activityregistry.size <= 1) {
            activityStore.loadActivities(); 
         }
-    }, [activityregistry.size, loadActivities]);
+    }, [activityregistry.size, loadActivities, activityStore]);
 
   if (activityStore.loadingInitial) return <LoadingComponent content={'Loading activities'} />;
     return (

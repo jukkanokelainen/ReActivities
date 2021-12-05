@@ -12,13 +12,14 @@ function ActivityItem({
     activity} : Props) {
         
         const {activityStore} = useStore();
+        const {deleteActivity, submitting} = activityStore
 
         //state that stores info on what button was clicked
         const [target, setTarget] = useState('');
 
         function handleActivityDelete(e : SyntheticEvent<HTMLButtonElement>){
             setTarget(activity.id);
-            activityStore.deleteActivity(activity.id)
+            deleteActivity(activity.id)
         }
 
     return (
@@ -37,7 +38,7 @@ function ActivityItem({
                     content='Delete' 
                     color='red' 
                     onClick={(e) => handleActivityDelete(e)} 
-                    loading={activityStore.submitting && target===activity.id}/>
+                    loading={submitting && target===activity.id}/>
                     <Label basic content={activity.category} />
                 </Item.Extra>
             </Item.Content>

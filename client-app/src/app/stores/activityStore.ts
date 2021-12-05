@@ -19,6 +19,23 @@ export default class ActivityStore{
         return Array.from(this.activityregistry.values()).sort((a, b) =>
         Date.parse(a.date) - Date.parse(b.date));
     }
+
+    get groupedActivities() {
+        //object entries turns the key value object into array
+        return Object.entries(
+            //reduce method executes a user-supplied callback function on each element on the array, 
+            //passing in the return value from the calculation on the preceding element.
+            //third parameter defines the initial value for the calculation. Here we define a object having a 
+            //string key and value is list of activities.
+            //in practice we move activities having same date in a list under the same key date.
+            this.activitiesByDate.reduce(
+            (activities, activity) => {
+                const date = activity.date;
+                activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+                return activities;
+            }, {} as {[key: string]: Activity[]})
+        )
+    }
     
     loadActivities = async () => {
         this.loadingInitial = true;
